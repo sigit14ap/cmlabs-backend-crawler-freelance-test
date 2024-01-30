@@ -83,13 +83,6 @@ const data = [{
             return await response.text()
         }, cssHref)
 
-        const jsScript = await page.$eval('script', (el) => el.src)
-
-        const jsContent = await page.evaluate(async (href) => {
-            const response = await fetch(href)
-            return await response.text()
-        }, jsScript)
-
         return html.replace(/url\(\//g, `url(${url}/`)
         .replace(/href="\//g, `href="${url}/`)
         .replace(/src="\//g, `src="${url}/`)
@@ -97,10 +90,11 @@ const data = [{
         .replace(/srcSet="\//g, `srcSet="${url}/`)
         .replace(/, \/_next\/image/g, `, ${url}/_next/image`)
         .replace('<head>', `<head><style>${cssContent}</style>`)
-        .replace('</head>', `<script>${jsContent}</script></head>`)
+        .replace(/background-image:url\(/g, `background-image:url(${url}/`)
+        .replace(/background-image:url\(/g, `background-image:url(${url}/`)
+        .replace(/bg-\[url\('\//g, `bg-[url(\'${url}/`)
     }
-}, 
-{
+}, {
     url: 'https://github.com',
     element: '.application-main',
     callback: (page, html, url) => {
